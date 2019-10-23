@@ -41,7 +41,7 @@ resource "alicloud_vswitch" "vswitches" {
 }
 
 resource "alicloud_nat_gateway" "default" {
-  count  = var.new_nat_gateway == true ? 1 : 0
+  count  = var.new_nat_gateway == "true" ? 1 : 0
   vpc_id = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
   name   = var.example_name
 }
@@ -75,6 +75,8 @@ resource "alicloud_cs_kubernetes" "k8s" {
     var.k8s_name_prefix,
     format(var.number_format, count.index + 1),
   )
+  vswitch_ids = [length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids))[count.index%length(split(",", join(",", var.vswitch_ids)))] : length(var.vswitch_cidrs) < 1 ? "" : split(",", join(",", alicloud_vswitch.vswitches.*.id))[count.index%length(split(",", join(",", alicloud_vswitch.vswitches.*.id)))]]
+
   new_nat_gateway       = false
   master_disk_category  = var.master_disk_category
   worker_disk_category  = var.worker_disk_category
