@@ -3,7 +3,7 @@
 
 variable "region" {
   description = "The region used to launch this module resources."
-  default     = ""
+  default     = "cn-beijing"
 }
 
 variable "availability_zone" {
@@ -75,13 +75,13 @@ variable "new_nat_gateway" {
 variable "master_instance_types" {
   description = "The ecs instance type used to launch master nodes. Default from instance typs datasource."
   type        = list(string)
-  default     = [""]
+  default     = ["ecs.n4.xlarge"]
 }
 
 variable "worker_instance_types" {
   description = "The ecs instance type used to launch worker nodes. Default from instance typs datasource."
   type        = list(string)
-  default     = [""]
+  default     = ["ecs.n4.xlarge"]
 }
 
 variable "master_disk_category" {
