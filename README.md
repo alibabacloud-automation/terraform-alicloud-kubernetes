@@ -20,8 +20,7 @@ This example can specify the following arguments to create user-defined kubernte
 * alicloud_access_key: The Alicloud Access Key ID
 * alicloud_secret_key: The Alicloud Access Secret Key
 * region: The ID of region in which launching resources
-* k8s_name_prefix: The name prefix of kubernetes cluster
-* k8s_number: The number of kubernetes cluster
+* k8s_name: The name of kubernetes cluster
 * k8s_worker_number: The number of worker nodes in each kubernetes cluster
 * k8s_pod_cidr: The kubernetes pod cidr block. It cannot be equals to vpc's or vswitch's and cannot be in them. If vpc's cidr block is `172.16.XX.XX/XX`,
 it had better to `192.168.XX.XX/XX` or `10.XX.XX.XX/XX`
@@ -49,14 +48,13 @@ Conditional creation
 --------------------
 This example can support the following creating kubernetes cluster scenario by setting different arguments.
 
-### 1. Create a new vpc, vswitches and nat gateway for the cluster.
+### 1. Retrieve existing vswitch by tags, name regex and resource group id.
 
 You can specify the following user-defined arguments:
 
-* vpc_name: A new vpc name
-* vpc_cidr: A new vpc cidr block
-* vswitch_name_prefix: The name prefix of several vswitches
-* vswitch_cidrs: List of cidr blocks for several new vswitches
+* vswitch_name_regex: A default filter applied to retrieve existing vswitches by name regex.
+* vswitch_tags: A default filter applied to retrieve existing vswitches by tags.
+* vswitch_resource_group_id: A default filter applied to retrieve existing vswitches by resource group id.
 
 ### 2. Using existing vpc and vswitches for the cluster.
 
@@ -77,7 +75,7 @@ In other words, you must set snat entry for each vswitch before running the exam
 
 Terraform version
 -----------------
-Terraform version 0.11.0 or newer and Provider version 1.9.0 or newer are required for this example to work.
+Terraform version 0.12.0 or newer and Provider version 1.60.0 or newer are required for this example to work.
 
 Authors
 -------
