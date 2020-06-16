@@ -1,8 +1,10 @@
 // Provider specific configs
 provider "alicloud" {
-  version              = ">=1.56.0"
-  region               = var.region != "" ? var.region : null
-  configuration_source = "terraform-alicloud-modules/kubernetes"
+  profile                 = var.profile != "" ? var.profile : null
+  shared_credentials_file = var.shared_credentials_file != "" ? var.shared_credentials_file : null
+  region                  = var.region
+  skip_region_validation  = var.skip_region_validation
+  configuration_source    = "terraform-alicloud-modules/kubernetes"
 }
 
 // Instance_types data source for instance_type
@@ -41,31 +43,33 @@ resource "alicloud_vswitch" "vswitches" {
 }
 
 resource "alicloud_nat_gateway" "default" {
-  count  = var.new_nat_gateway == "true" ? 1 : 0
+  count  = var.new_nat_gateway == true ? 1 : 0
   vpc_id = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
   name   = var.example_name
 }
 
 resource "alicloud_eip" "default" {
-  count     = var.new_nat_gateway == "true" ? 1 : 0
+  count     = var.new_nat_gateway == true ? 1 : 0
   bandwidth = 10
 }
 
 resource "alicloud_eip_association" "default" {
-  count         = var.new_nat_gateway == "true" ? 1 : 0
+  count         = var.new_nat_gateway == true ? 1 : 0
   allocation_id = alicloud_eip.default[0].id
   instance_id   = alicloud_nat_gateway.default[0].id
 }
 
 resource "alicloud_snat_entry" "default" {
-  count         = var.new_nat_gateway == "false" ? 0 : length(var.vswitch_ids) > 0 ? length(var.vswitch_ids) : length(var.vswitch_cidrs)
-  snat_table_id = alicloud_nat_gateway.default[0].snat_table_ids
+  count             = var.new_nat_gateway == false ? 0 : length(var.vswitch_ids) > 0 ? length(var.vswitch_ids) : length(var.vswitch_cidrs)
+  snat_table_id     = alicloud_nat_gateway.default[0].snat_table_ids
   source_vswitch_id = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids))[count.index % length(split(",", join(",", var.vswitch_ids)))] : length(var.vswitch_cidrs) < 1 ? "" : split(",", join(",", alicloud_vswitch.vswitches.*.id))[count.index % length(split(",", join(",", alicloud_vswitch.vswitches.*.id)))]
-  snat_ip = alicloud_eip.default[0].ip_address
+  snat_ip           = alicloud_eip.default[0].ip_address
+  depends_on        = [alicloud_eip_association.default]
 }
 
 resource "alicloud_cs_kubernetes" "k8s" {
   count = var.k8s_number
+
   name = var.k8s_name_prefix == "" ? format(
     "%s-%s",
     var.example_name,
@@ -75,22 +79,26 @@ resource "alicloud_cs_kubernetes" "k8s" {
     var.k8s_name_prefix,
     format(var.number_format, count.index + 1),
   )
-  vswitch_ids = [length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids))[count.index%length(split(",", join(",", var.vswitch_ids)))] : length(var.vswitch_cidrs) < 1 ? "" : split(",", join(",", alicloud_vswitch.vswitches.*.id))[count.index%length(split(",", join(",", alicloud_vswitch.vswitches.*.id)))]]
-
-  new_nat_gateway       = false
-  master_disk_category  = var.master_disk_category
-  worker_disk_category  = var.worker_disk_category
-  master_disk_size      = var.master_disk_size
-  worker_disk_size      = var.master_disk_size
-  password              = var.ecs_password
-  pod_cidr              = var.k8s_pod_cidr
-  service_cidr          = var.k8s_service_cidr
-  enable_ssh            = true
-  install_cloud_monitor = true
-
-  depends_on = [alicloud_snat_entry.default]
+  master_vswitch_ids    = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids)) : length(var.vswitch_cidrs) < 1 ? [] : split(",", join(",", alicloud_vswitch.vswitches.*.id))
+  worker_vswitch_ids    = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids)) : length(var.vswitch_cidrs) < 1 ? [] : split(",", join(",", alicloud_vswitch.vswitches.*.id))
   master_instance_types = var.master_instance_types
   worker_instance_types = var.worker_instance_types
-  worker_numbers = var.k8s_worker_numbers
+  worker_number         = var.k8s_worker_number
+  node_cidr_mask        = var.node_cidr_mask
+  enable_ssh            = var.enable_ssh
+  install_cloud_monitor = var.install_cloud_monitor
+  cpu_policy            = var.cpu_policy
+  proxy_mode            = var.proxy_mode
+  password              = var.password
+  pod_cidr              = var.k8s_pod_cidr
+  service_cidr          = var.k8s_service_cidr
+  version               = var.k8s_version
+  dynamic "addons" {
+    for_each = var.cluster_addons
+    content {
+      name   = lookup(addons.value, "name", var.cluster_addons)
+      config = lookup(addons.value, "config", var.cluster_addons)
+    }
+  }
+  depends_on = [alicloud_snat_entry.default]
 }
-

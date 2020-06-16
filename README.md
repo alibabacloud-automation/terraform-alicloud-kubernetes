@@ -12,6 +12,9 @@ These types of the module resource are supported:
 - [Nat Gateway](https://www.terraform.io/docs/providers/alicloud/r/nat_gateway.html)
 - [Kubernetes](https://www.terraform.io/docs/providers/alicloud/r/cs_kubernetes.html)
 
+Terraform version
+-----------------
+The Module requires Terraform 0.12 and Terraform Provider AliCloud 1.75.0+.
 
 Usage
 -----
@@ -58,12 +61,69 @@ You can specify the following user-defined arguments:
 * vswitch_name_prefix: The name prefix of several vswitches
 * vswitch_cidrs: List of cidr blocks for several new vswitches
 
+```hcl
+variable "profile" {
+  default = "default"
+}
+
+variable "region" {
+  default = "cn-hangzhou"
+}
+
+data "alicloud_vpcs" "default" {
+  is_default = true
+}
+
+module "k8s" {
+  source = "../"
+  region = var.region
+
+  new_nat_gateway       = true
+  vpc_name              = "tf-k8s-vpc"
+  vpc_cidr              = "10.0.0.0/8"
+  vswitch_name_prefix   = "tf-k8s-vsw"
+  vswitch_cidrs         = ["10.1.0.0/16", "10.2.0.0/16", "10.3.0.0/16"]
+  master_instance_types = ["ecs.n1.medium", "ecs.c5.large", "ecs.n1.medium"]
+  worker_instance_types = ["ecs.n1.medium"]
+  k8s_pod_cidr          = "192.168.5.0/24"
+  k8s_service_cidr      = "192.168.2.0/24"
+  k8s_worker_number     = 2
+}
+```
+
 ### 2. Using existing vpc and vswitches for the cluster.
 
 You can specify the following user-defined arguments:
 
 * vpc_id: A existing vpc ID
 * vswitch_ids: List of IDs for several existing vswitches
+
+```hcl
+variable "profile" {
+  default = "default"
+}
+
+variable "region" {
+  default = "cn-hangzhou"
+}
+
+data "alicloud_vpcs" "default" {
+  is_default = true
+}
+
+module "k8s" {
+  source = "../"
+  region = var.region
+
+  vpc_id                = data.alicloud_vpcs.default.vpcs.0.id
+  vswitch_ids           = ["vsw-bp1pog8voc3f42arr****", "vsw-bp1jxetj1386gqssg****", "vsw-bp1s1835sq5tjss9s****"]
+  master_instance_types = ["ecs.n1.medium", "ecs.c5.large", "ecs.n1.medium"]
+  worker_instance_types = ["ecs.n1.medium"]
+  k8s_pod_cidr          = "192.168.5.0/24"
+  k8s_service_cidr      = "192.168.2.0/24"
+  k8s_worker_number     = 2
+}
+```
 
 ### 3. Using existing vpc, vswitches and nat gateway for the cluster.
 
@@ -74,10 +134,43 @@ You can specify the following user-defined arguments:
 * new_nat_gateway: Set it to false. But you must ensure you specified vswitches can access internet.
 In other words, you must set snat entry for each vswitch before running the example.
 
+```hcl
+variable "profile" {
+  default = "default"
+}
 
-Terraform version
------------------
-Terraform version 0.11.0 or newer and Provider version 1.9.0 or newer are required for this example to work.
+variable "region" {
+  default = "cn-hangzhou"
+}
+
+data "alicloud_vpcs" "default" {
+  is_default = true
+}
+
+module "k8s" {
+  source = "../"
+  region = var.region
+
+  new_nat_gateway       = false
+  vpc_id                = data.alicloud_vpcs.default.vpcs.0.id
+  vswitch_ids           = ["vsw-bp1pog8voc3f42arr****", "vsw-bp1jxetj1386gqssg****", "vsw-bp1s1835sq5tjss9s****"]
+  master_instance_types = ["ecs.n1.medium", "ecs.c5.large", "ecs.n1.medium"]
+  worker_instance_types = ["ecs.n1.medium"]
+  k8s_pod_cidr          = "192.168.5.0/24"
+  k8s_service_cidr      = "192.168.2.0/24"
+  k8s_worker_number     = 2
+}
+```
+
+## Examples
+
+* [complete example](https://github.com/terraform-alicloud-modules/terraform-alicloud-kubernetes/tree/master/examples/complete)
+
+Submit Issues
+-------------
+If you have any problems when using this module, please opening a [provider issue](https://github.com/terraform-providers/terraform-provider-alicloud/issues/new) and let us know.
+
+**Note:** There does not recommend to open an issue on this repo.
 
 Authors
 -------
