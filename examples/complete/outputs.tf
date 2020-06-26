@@ -29,3 +29,7 @@ output "cluster_nodes" {
   value       = module.k8s.cluster_nodes
 }
 
+output "this_k8s_node_ids" {
+  description = "List ids of of cluster node."
+  value       = module.k8s.this_k8s_node_ids
+}
