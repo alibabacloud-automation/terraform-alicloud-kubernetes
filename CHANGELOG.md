@@ -1,4 +1,10 @@
-## 1.3.0 (Unreleased)
+## 1.4.0 (Unreleased)
+## 1.3.0 (Jun 26,2020)
+
+IMPROVEMENTS
+
+- Support output 'this_k8s_node_ids' parameter. [GH-5]( https://github.com/terraform-alicloud-modules/terraform-alicloud-kubernetes/pull/5)
+
 ## 1.2.0 (Jun 16,2020)
 
 IMPROVEMENTS
