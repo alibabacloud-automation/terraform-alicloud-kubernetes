@@ -3,7 +3,7 @@ variable "profile" {
 }
 
 variable "region" {
-  default = "cn-hangzhou"
+  default = "cn-shanghai"
 }
 
 data "alicloud_vpcs" "default" {

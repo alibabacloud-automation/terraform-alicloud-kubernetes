@@ -43,9 +43,11 @@ resource "alicloud_vswitch" "vswitches" {
 }
 
 resource "alicloud_nat_gateway" "default" {
-  count  = var.new_nat_gateway == true ? 1 : 0
-  vpc_id = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
-  name   = var.example_name
+  count      = var.new_nat_gateway == true ? 1 : 0
+  vpc_id     = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
+  name       = var.example_name
+  nat_type   = var.nat_type
+  vswitch_id = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids))[count.index % length(split(",", join(",", var.vswitch_ids)))] : length(var.vswitch_cidrs) < 1 ? "" : split(",", join(",", alicloud_vswitch.vswitches.*.id))[count.index % length(split(",", join(",", alicloud_vswitch.vswitches.*.id)))]
 }
 
 resource "alicloud_eip" "default" {
