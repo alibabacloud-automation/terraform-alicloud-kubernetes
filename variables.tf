@@ -4,12 +4,12 @@
 variable "region" {
   description = "The region used to launch this module resources."
   type        = string
-  default     = "cn-shanghai"
+  default     = ""
 }
 variable "profile" {
   description = "The profile name as set in the shared credentials file. If not set, it will be sourced from the ALICLOUD_PROFILE environment variable."
   type        = string
-  default     = "default"
+  default     = ""
 }
 variable "shared_credentials_file" {
   description = "This is the path to the shared credentials file. If this is not set and a profile is specified, $HOME/.aliyun/config.json will be used."
@@ -112,13 +112,13 @@ variable "new_nat_gateway" {
 variable "master_instance_types" {
   description = "The ecs instance types used to launch master nodes."
   type        = list(string)
-  default     = ["ecs.n1.medium", "ecs.c5.large", "ecs.n1.medium"]
+  default     = []
 }
 
 variable "worker_instance_types" {
   description = "The ecs instance types used to launch worker nodes."
   type        = list(string)
-  default     = ["ecs.n1.medium"]
+  default     = []
 }
 
 variable "node_cidr_mask" {
@@ -183,14 +183,14 @@ variable "k8s_version" {
 }
 
 variable "cluster_addons" {
-  description = "Addon components in kubernetes cluster"
-  type = list(object({
-    name   = string
-    config = string
+  description     = "Addon components in kubernetes cluster"
+  type            = list(object({
+         name     = string
+         config   = string
   }))
-  default = [{
-        "name"     = "flannel",
-        "config"   = "",
+  default         = [{
+         "name"   = "flannel",
+         "config" = "",
       }
   ]
 }
