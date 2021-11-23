@@ -12,10 +12,6 @@ These types of the module resource are supported:
 - [Nat Gateway](https://www.terraform.io/docs/providers/alicloud/r/nat_gateway.html)
 - [Kubernetes](https://www.terraform.io/docs/providers/alicloud/r/cs_kubernetes.html)
 
-Terraform version
------------------
-The Module requires Terraform 0.12 and Terraform Provider AliCloud 1.75.0+.
-
 Usage
 -----
 This example can specify the following arguments to create user-defined kuberntes cluster
@@ -76,7 +72,6 @@ data "alicloud_vpcs" "default" {
 
 module "k8s" {
   source = "../"
-  region = var.region
 
   new_nat_gateway       = true
   vpc_name              = "tf-k8s-vpc"
@@ -113,7 +108,6 @@ data "alicloud_vpcs" "default" {
 
 module "k8s" {
   source = "../"
-  region = var.region
 
   vpc_id                = data.alicloud_vpcs.default.vpcs.0.id
   vswitch_ids           = ["vsw-bp1pog8voc3f42arr****", "vsw-bp1jxetj1386gqssg****", "vsw-bp1s1835sq5tjss9s****"]
@@ -149,7 +143,6 @@ data "alicloud_vpcs" "default" {
 
 module "k8s" {
   source = "../"
-  region = var.region
 
   new_nat_gateway       = false
   vpc_id                = data.alicloud_vpcs.default.vpcs.0.id
@@ -166,6 +159,78 @@ module "k8s" {
 
 * [complete example](https://github.com/terraform-alicloud-modules/terraform-alicloud-kubernetes/tree/master/examples/complete)
 
+## Notes
+From the version v1.4.0, the module has removed the following `provider` setting:
+
+```hcl
+provider "alicloud" {
+  profile                 = var.profile != "" ? var.profile : null
+  shared_credentials_file = var.shared_credentials_file != "" ? var.shared_credentials_file : null
+  region                  = var.region
+  skip_region_validation  = var.skip_region_validation
+  configuration_source    = "terraform-alicloud-modules/kubernetes"
+}
+```
+
+If you still want to use the `provider` setting to apply this module, you can specify a supported version, like 1.3.0:
+
+```hcl
+module "k8s" {
+  source     = "terraform-alicloud-modules/kubernetes/alicloud"
+  version    = "1.3.0"
+  region     = "cn-hangzhou"
+  profile    = "Your-Profile-Name"
+  create_vpc = true
+  vpc_name   = "my-env-vpc"
+  // ...
+}
+```
+
+If you want to upgrade the module to 1.4.0 or higher in-place, you can define a provider which same region with
+previous region:
+
+```hcl
+provider "alicloud" {
+  region  = "cn-hangzhou"
+  profile = "Your-Profile-Name"
+}
+module "infrastructure" {
+  source     = "terraform-alicloud-modules/multi-zone-infrastructure-with-ots/alicloud"
+  create_vpc = true
+  vpc_name   = "my-env-vpc"
+  // ...
+}
+```
+or specify an alias provider with a defined region to the module using `providers`:
+
+```hcl
+provider "alicloud" {
+  region  = "cn-hangzhou"
+  profile = "Your-Profile-Name"
+  alias   = "hz"
+}
+module "infrastructure" {
+  source     = "terraform-alicloud-modules/multi-zone-infrastructure-with-ots/alicloud"
+  providers  = {
+    alicloud = alicloud.hz
+  }
+  create_vpc = true
+  vpc_name   = "my-env-vpc"
+  // ...
+}
+```
+
+and then run `terraform init` and `terraform apply` to make the defined provider effect to the existing module state.
+
+More details see [How to use provider in the module](https://www.terraform.io/docs/language/modules/develop/providers.html#passing-providers-explicitly)
+
+## Terraform versions
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12.0 |
+| <a name="requirement_alicloud"></a> [alicloud](#requirement\_alicloud) | >= 1.75.0 |
+
 Submit Issues
 -------------
 If you have any problems when using this module, please opening a [provider issue](https://github.com/terraform-providers/terraform-provider-alicloud/issues/new) and let us know.
@@ -174,7 +239,7 @@ If you have any problems when using this module, please opening a [provider issu
 
 Authors
 -------
-Created and maintained by He Guimin(@xiaozhu36, heguimin36@163.com)
+Created and maintained by Alibaba Cloud Terraform Team(terraform@alibabacloud.com)
 
 License
 -------

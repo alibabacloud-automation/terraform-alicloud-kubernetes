@@ -1,12 +1,3 @@
-// Provider specific configs
-provider "alicloud" {
-  profile                 = var.profile != "" ? var.profile : null
-  shared_credentials_file = var.shared_credentials_file != "" ? var.shared_credentials_file : null
-  region                  = var.region
-  skip_region_validation  = var.skip_region_validation
-  configuration_source    = "terraform-alicloud-modules/kubernetes"
-}
-
 // Instance_types data source for instance_type
 data "alicloud_instance_types" "default" {
   cpu_core_count = var.cpu_core_count
