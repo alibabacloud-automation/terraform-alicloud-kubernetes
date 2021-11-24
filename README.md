@@ -176,12 +176,12 @@ If you still want to use the `provider` setting to apply this module, you can sp
 
 ```hcl
 module "k8s" {
-  source     = "terraform-alicloud-modules/kubernetes/alicloud"
-  version    = "1.3.0"
-  region     = "cn-hangzhou"
-  profile    = "Your-Profile-Name"
-  create_vpc = true
-  vpc_name   = "my-env-vpc"
+  source          = "terraform-alicloud-modules/kubernetes/alicloud"
+  version         = "1.3.0"
+  region          = "cn-hangzhou"
+  profile         = "Your-Profile-Name"
+  new_nat_gateway = true
+  vpc_name        = "tf-k8s-vpc"
   // ...
 }
 ```
@@ -194,10 +194,10 @@ provider "alicloud" {
   region  = "cn-hangzhou"
   profile = "Your-Profile-Name"
 }
-module "infrastructure" {
-  source     = "terraform-alicloud-modules/multi-zone-infrastructure-with-ots/alicloud"
-  create_vpc = true
-  vpc_name   = "my-env-vpc"
+module "k8s" {
+  source          = "terraform-alicloud-modules/kubernetes/alicloud"
+  new_nat_gateway = true
+  vpc_name        = "tf-k8s-vpc"
   // ...
 }
 ```
@@ -209,13 +209,13 @@ provider "alicloud" {
   profile = "Your-Profile-Name"
   alias   = "hz"
 }
-module "infrastructure" {
-  source     = "terraform-alicloud-modules/multi-zone-infrastructure-with-ots/alicloud"
+module "k8s" {
+  source          = "terraform-alicloud-modules/kubernetes/alicloud"
   providers  = {
     alicloud = alicloud.hz
   }
-  create_vpc = true
-  vpc_name   = "my-env-vpc"
+  new_nat_gateway = true
+  vpc_name        = "tf-k8s-vpc"
   // ...
 }
 ```
