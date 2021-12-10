@@ -1,4 +1,10 @@
-## 1.4.0 (Unreleased)
+## 1.5.0 (Unreleased)
+## 1.4.0 (December 10, 2021)
+
+ENHANCEMENTS:
+
+- Removes the provider setting and improves the Readme [GH-8](https://github.com/terraform-alicloud-modules/terraform-alicloud-kubernetes/pull/8)
+
 ## 1.3.0 (Jun 26,2020)
 
 IMPROVEMENTS
