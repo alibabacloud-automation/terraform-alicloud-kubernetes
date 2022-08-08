@@ -177,16 +177,26 @@ variable "k8s_service_cidr" {
 }
 
 variable "k8s_version" {
-  description = "The version of the kubernetes version.  Valid values: '1.16.6-aliyun.1','1.14.8-aliyun.1'. Default to '1.16.6-aliyun.1'."
+  description = "The version of the kubernetes version.  Valid values: 1.20.11-aliyun.1 1.18.8-aliyun.1."
   type        = string
-  default     = "1.16.6-aliyun.1"
+  default     = "1.20.11-aliyun.1"
 }
 
 variable "cluster_addons" {
-  description = "Addon components in kubernetes cluster"
-  type = list(object({
-    name   = string
-    config = string
+  description     = "Addon components in kubernetes cluster"
+  type            = list(object({
+         name     = string
+         config   = string
   }))
-  default = []
+  default         = [{
+         "name"   = "flannel",
+         "config" = "",
+      }
+  ]
+}
+
+variable "nat_type" {
+  description = "The type of NAT gateway.   Valid values: 'Enhanced'."
+  type        = string
+  default     = "Enhanced"
 }
