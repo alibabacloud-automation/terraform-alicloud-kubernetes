@@ -23,18 +23,28 @@ variable "skip_region_validation" {
 }
 
 ######################
+# Zone
+######################
+
+variable "zone_id" {
+    description = "The Zone to launch the instance."
+    type        = string
+    default     = "cn-beijing-h"
+}
+
+######################
 # Instance typs variables
 ######################
 variable "cpu_core_count" {
   description = "CPU core count is used to fetch instance types."
   type        = number
-  default     = 1
+  default     = 4
 }
 
 variable "memory_size" {
   description = "Memory size used to fetch instance types."
   type        = number
-  default     = 2
+  default     = 8
 }
 
 variable "k8s_number" {

@@ -12,14 +12,12 @@ data "alicloud_vpcs" "default" {
 
 module "k8s" {
   source = "../.."
-  region = var.region
 
-  new_nat_gateway       = false
-  vpc_id                = data.alicloud_vpcs.default.vpcs.0.id
-  vswitch_ids           = ["vsw-bp1pog8voc3f42arr****", "vsw-bp1jxetj1386gqssg****", "vsw-bp1s1835sq5tjss9s****"]
-  master_instance_types = ["ecs.n1.medium", "ecs.c5.large", "ecs.n1.medium"]
-  worker_instance_types = ["ecs.n1.medium"]
+  new_nat_gateway       = true
+  master_instance_types = ["ecs.g6.large", "ecs.g6.large", "ecs.g6.large"]
+  worker_instance_types = ["ecs.g6.large"]
   k8s_pod_cidr          = "192.168.5.0/24"
   k8s_service_cidr      = "192.168.2.0/24"
   k8s_worker_number     = 2
+  k8s_version           = "1.24.6-aliyun.1"
 }

@@ -13,20 +13,20 @@ data "alicloud_zones" "default" {
 resource "alicloud_vpc" "vpc" {
   count      = var.vpc_id == "" ? 1 : 0
   cidr_block = var.vpc_cidr
-  name       = var.vpc_name == "" ? var.example_name : var.vpc_name
+  vpc_name   = var.vpc_name == "" ? var.example_name : var.vpc_name
 }
 
 // According to the vswitch cidr blocks to launch several vswitches
 resource "alicloud_vswitch" "vswitches" {
-  count             = length(var.vswitch_ids) > 0 ? 0 : length(var.vswitch_cidrs)
-  vpc_id            = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
-  cidr_block        = var.vswitch_cidrs[count.index]
-  availability_zone = data.alicloud_zones.default.zones[count.index % length(data.alicloud_zones.default.zones)]["id"]
-  name = var.vswitch_name_prefix == "" ? format(
+  count        = length(var.vswitch_ids) > 0 ? 0 : length(var.vswitch_cidrs)
+  vpc_id       = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
+  cidr_block   = var.vswitch_cidrs[count.index]
+  zone_id      = var.zone_id==""?data.alicloud_zones.default.zones[count.index % length(data.alicloud_zones.default.zones)]["id"]:var.zone_id
+  vswitch_name = var.vswitch_name_prefix == "" ? format(
     "%s-%s",
     var.example_name,
     format(var.number_format, count.index + 1),
-    ) : format(
+  ) : format(
     "%s-%s",
     var.vswitch_name_prefix,
     format(var.number_format, count.index + 1),
@@ -34,9 +34,11 @@ resource "alicloud_vswitch" "vswitches" {
 }
 
 resource "alicloud_nat_gateway" "default" {
-  count  = var.new_nat_gateway == true ? 1 : 0
-  vpc_id = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
-  name   = var.example_name
+  count      = var.new_nat_gateway == true ? 1 : 0
+  vpc_id     = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
+  name       = var.example_name
+  nat_type   = "Enhanced"
+  vswitch_id = alicloud_vswitch.vswitches[0].id
 }
 
 resource "alicloud_eip" "default" {
@@ -65,7 +67,7 @@ resource "alicloud_cs_kubernetes" "k8s" {
     "%s-%s",
     var.example_name,
     format(var.number_format, count.index + 1),
-    ) : format(
+  ) : format(
     "%s-%s",
     var.k8s_name_prefix,
     format(var.number_format, count.index + 1),
