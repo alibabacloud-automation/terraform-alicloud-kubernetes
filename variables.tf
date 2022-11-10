@@ -27,9 +27,9 @@ variable "skip_region_validation" {
 ######################
 
 variable "zone_id" {
-    description = "The Zone to launch the instance."
-    type        = string
-    default     = "cn-beijing-h"
+  description = "The Zone to launch the instance."
+  type        = string
+  default     = ""
 }
 
 ######################
@@ -131,6 +131,12 @@ variable "worker_instance_types" {
   default     = []
 }
 
+variable "disk_category" {
+  description = "The disk category used to launch master and worker nodes. default 'cloud_ssd'"
+  type        = string
+  default     = "cloud_ssd"
+}
+
 variable "node_cidr_mask" {
   type        = number
   description = "The node cidr block to specific how many pods can run on single node. Valid values: [24-28]."
@@ -187,14 +193,14 @@ variable "k8s_service_cidr" {
 }
 
 variable "k8s_version" {
-  description = "The version of the kubernetes version.  Valid values: '1.16.6-aliyun.1','1.14.8-aliyun.1'. Default to '1.16.6-aliyun.1'."
+  description = "The version of the kubernetes version.  Valid values: '1.24.6-aliyun.1','1.22.15-aliyun.1'. Default to '1.24.6-aliyun.1'."
   type        = string
-  default     = "1.16.6-aliyun.1"
+  default     = "1.24.6-aliyun.1"
 }
 
 variable "cluster_addons" {
   description = "Addon components in kubernetes cluster"
-  type = list(object({
+  type        = list(object({
     name   = string
     config = string
   }))

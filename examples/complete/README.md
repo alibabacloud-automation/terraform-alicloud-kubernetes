@@ -5,8 +5,8 @@ terraform-alicloud-kubernetes
 ## Note
 
 1. specifications in `master_instance_types` and `worker_instance_types` parameter
-    1. have to support cloud efficient disk (高效云盘) to create ACK.
-    2. can't be sharable instance type (共享型实例).
+   1. can't be sharable instance type (共享型实例).
+   2. if specify some instance type, check if it supports the `disk_category` parameter, which is `cloud_ssd`(SSD云盘) by default. Or you should set the `disk_catagory` parameter.
 2. to specify region where VPC is created, use provider.
 
 ```hcl
