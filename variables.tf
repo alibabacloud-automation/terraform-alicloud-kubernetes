@@ -52,6 +52,12 @@ variable "vpc_name" {
   default     = ""
 }
 
+variable "create_vpc" {
+  description = "Boolean.  If you have a vpc already, use that one, else make this true and one will be created."
+  type        = bool
+  default     = false
+}
+
 variable "vpc_id" {
   description = "Existing vpc id used to create several vswitches and other resources."
   type        = string
@@ -130,13 +136,7 @@ variable "node_cidr_mask" {
 variable "enable_ssh" {
   description = "Enable login to the node through SSH."
   type        = bool
-  default     = true
-}
-
-variable "install_cloud_monitor" {
-  description = "Install cloud monitor agent on ECS."
-  type        = bool
-  default     = true
+  default     = false
 }
 
 variable "cpu_policy" {
@@ -151,8 +151,8 @@ variable "proxy_mode" {
   default     = "iptables"
 }
 
-variable "password" {
-  description = "The password of ECS instance."
+variable "master_password" {
+  description = "The password of master ECS instance."
   type        = string
   default     = "Just4Test"
 }
@@ -177,9 +177,9 @@ variable "k8s_service_cidr" {
 }
 
 variable "k8s_version" {
-  description = "The version of the kubernetes version.  Valid values: '1.16.6-aliyun.1','1.14.8-aliyun.1'. Default to '1.16.6-aliyun.1'."
+  description = "The version of the kubernetes version."
   type        = string
-  default     = "1.16.6-aliyun.1"
+  default     = ""
 }
 
 variable "cluster_addons" {
@@ -189,4 +189,67 @@ variable "cluster_addons" {
     config = string
   }))
   default = []
+}
+
+######################
+# node pool variables
+######################
+
+variable "worker_password" {
+  description = "The password of worker ECS instance."
+  type        = list(string)
+  default     = ["Just4Test"]
+}
+
+variable "install_cloud_monitor" {
+  description = "Install cloud monitor agent on ECS."
+  type        = bool
+  default     = true
+}
+
+variable "instance_charge_type" {
+  description = "The charge type of instance. Choices are 'PostPaid' and 'PrePaid'."
+  type        = string
+  default     = "PostPaid"
+}
+
+variable "subscription" {
+  description = "A mapping of fields for Prepaid ECS instances created. "
+  type        = map(string)
+  default = {
+    period            = 1
+    period_unit       = "Month"
+    auto_renew        = false
+    auto_renew_period = 1
+  }
+}
+
+variable "system_disk_category" {
+  description = "The system disk category used to launch one or more worker ecs instances."
+  type        = string
+  default     = "cloud_efficiency"
+}
+
+variable "system_disk_size" {
+  description = "The system disk size used to launch one or more worker ecs instances."
+  type        = number
+  default     = 40
+}
+
+variable "data_disks" {
+  description = "Additional data disks to attach to the scaled ECS instance."
+  type        = list(map(string))
+  default     = []
+}
+
+variable "disk_category" {
+  description = "The system disk category used to launch one or more worker ecs instances."
+  type        = string
+  default     = "cloud_efficiency"
+}
+
+variable "disk_size" {
+  description = "The system disk size used to launch one or more worker ecs instances."
+  type        = number
+  default     = 40
 }
