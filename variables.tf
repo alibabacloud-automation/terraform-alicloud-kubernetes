@@ -23,18 +23,28 @@ variable "skip_region_validation" {
 }
 
 ######################
+# Zone
+######################
+
+variable "zone_id" {
+  description = "The Zone to launch the instance."
+  type        = string
+  default     = ""
+}
+
+######################
 # Instance typs variables
 ######################
 variable "cpu_core_count" {
   description = "CPU core count is used to fetch instance types."
   type        = number
-  default     = 1
+  default     = 4
 }
 
 variable "memory_size" {
   description = "Memory size used to fetch instance types."
   type        = number
-  default     = 2
+  default     = 8
 }
 
 variable "k8s_number" {
@@ -121,6 +131,12 @@ variable "worker_instance_types" {
   default     = []
 }
 
+variable "disk_category" {
+  description = "The disk category used to launch master and worker nodes. default 'cloud_ssd'"
+  type        = string
+  default     = "cloud_ssd"
+}
+
 variable "node_cidr_mask" {
   type        = number
   description = "The node cidr block to specific how many pods can run on single node. Valid values: [24-28]."
@@ -177,14 +193,14 @@ variable "k8s_service_cidr" {
 }
 
 variable "k8s_version" {
-  description = "The version of the kubernetes version.  Valid values: '1.16.6-aliyun.1','1.14.8-aliyun.1'. Default to '1.16.6-aliyun.1'."
+  description = "The version of the kubernetes version.  Valid values: '1.24.6-aliyun.1','1.22.15-aliyun.1'. Default to '1.24.6-aliyun.1'."
   type        = string
-  default     = "1.16.6-aliyun.1"
+  default     = "1.24.6-aliyun.1"
 }
 
 variable "cluster_addons" {
   description = "Addon components in kubernetes cluster"
-  type = list(object({
+  type        = list(object({
     name   = string
     config = string
   }))
