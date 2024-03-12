@@ -1,4 +1,11 @@
-## 1.5.0 (Unreleased)
+## 1.6.0 (Unreleased)
+## 1.5.0 (March 12, 2024)
+
+ENHANCEMENTS:
+
+- Add resource alicloud_cs_kubernetes_node_pool [GH-11](https://github.com/alibabacloud-automation/terraform-alicloud-kubernetes/pull/11) 
+
+
 ## 1.4.0 (December 10, 2021)
 
 ENHANCEMENTS:
