@@ -1,4 +1,8 @@
-## 1.6.0 (Unreleased)
+## 2.1.0 (Unreleased)
+## 2.0.0 (February 13, 2025)
+
+- module: remove unused variables [GH-13](https://github.com/alibabacloud-automation/terraform-alicloud-kubernetes/pull/13)
+
 ## 1.5.0 (March 12, 2024)
 
 ENHANCEMENTS:
