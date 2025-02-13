@@ -1,25 +1,25 @@
-// Instance_types data source for instance_type
+# Instance_types data source for instance_type
 data "alicloud_instance_types" "default" {
   cpu_core_count = var.cpu_core_count
   memory_size    = var.memory_size
 }
 
-// Zones data source for availability_zone
+# Zones data source for availability_zone
 data "alicloud_zones" "default" {
   available_instance_type = data.alicloud_instance_types.default.instance_types[0].id
 }
 
-// If there is not specifying vpc_id, the module will launch a new vpc
+# If there is not specifying vpc_id, the module will launch a new vpc
 resource "alicloud_vpc" "vpc" {
   count      = var.create_vpc ? 1 : 0
   cidr_block = var.vpc_cidr
   vpc_name   = var.vpc_name == "" ? var.example_name : var.vpc_name
 }
 
-// According to the vswitch cidr blocks to launch several vswitches
+# According to the vswitch cidr blocks to launch several vswitches
 resource "alicloud_vswitch" "vswitches" {
   count      = length(var.vswitch_ids) > 0 ? 0 : length(var.vswitch_cidrs)
-  vpc_id     = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
+  vpc_id     = var.vpc_id == "" ? join("", alicloud_vpc.vpc[*].id) : var.vpc_id
   cidr_block = var.vswitch_cidrs[count.index]
   zone_id    = data.alicloud_zones.default.zones[count.index % length(data.alicloud_zones.default.zones)]["id"]
   vswitch_name = var.vswitch_name_prefix == "" ? format(
@@ -34,9 +34,9 @@ resource "alicloud_vswitch" "vswitches" {
 }
 
 resource "alicloud_nat_gateway" "default" {
-  count  = var.new_nat_gateway == true ? 1 : 0
-  vpc_id = var.vpc_id == "" ? join("", alicloud_vpc.vpc.*.id) : var.vpc_id
-  name   = var.example_name
+  count            = var.new_nat_gateway == true ? 1 : 0
+  vpc_id           = var.vpc_id == "" ? join("", alicloud_vpc.vpc[*].id) : var.vpc_id
+  nat_gateway_name = var.example_name
 }
 
 resource "alicloud_eip" "default" {
@@ -53,7 +53,7 @@ resource "alicloud_eip_association" "default" {
 resource "alicloud_snat_entry" "default" {
   count             = var.new_nat_gateway == false ? 0 : length(var.vswitch_ids) > 0 ? length(var.vswitch_ids) : length(var.vswitch_cidrs)
   snat_table_id     = alicloud_nat_gateway.default[0].snat_table_ids
-  source_vswitch_id = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids))[count.index % length(split(",", join(",", var.vswitch_ids)))] : length(var.vswitch_cidrs) < 1 ? "" : split(",", join(",", alicloud_vswitch.vswitches.*.id))[count.index % length(split(",", join(",", alicloud_vswitch.vswitches.*.id)))]
+  source_vswitch_id = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids))[count.index % length(split(",", join(",", var.vswitch_ids)))] : length(var.vswitch_cidrs) < 1 ? "" : split(",", join(",", alicloud_vswitch.vswitches[*].id))[count.index % length(split(",", join(",", alicloud_vswitch.vswitches[*].id)))]
   snat_ip           = alicloud_eip.default[0].ip_address
   depends_on        = [alicloud_eip_association.default]
 }
@@ -70,7 +70,7 @@ resource "alicloud_cs_kubernetes" "k8s" {
     var.k8s_name_prefix,
     format(var.number_format, count.index + 1),
   )
-  master_vswitch_ids    = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids)) : length(var.vswitch_cidrs) < 1 ? [] : split(",", join(",", alicloud_vswitch.vswitches.*.id))
+  master_vswitch_ids    = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids)) : length(var.vswitch_cidrs) < 1 ? [] : split(",", join(",", alicloud_vswitch.vswitches[*].id))
   master_instance_types = var.master_instance_types
   node_cidr_mask        = var.node_cidr_mask
   enable_ssh            = var.enable_ssh
@@ -95,7 +95,7 @@ resource "alicloud_cs_kubernetes_node_pool" "default" {
 
   name        = alicloud_cs_kubernetes.k8s[count.index].name
   cluster_id  = alicloud_cs_kubernetes.k8s[count.index].id
-  vswitch_ids = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids)) : length(var.vswitch_cidrs) < 1 ? [] : split(",", join(",", alicloud_vswitch.vswitches.*.id))
+  vswitch_ids = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids)) : length(var.vswitch_cidrs) < 1 ? [] : split(",", join(",", alicloud_vswitch.vswitches[*].id))
   password    = var.worker_password[count.index]
 
   desired_size          = var.k8s_worker_number

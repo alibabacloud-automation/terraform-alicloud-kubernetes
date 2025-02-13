@@ -1,4 +1,4 @@
-// Output VPC
+# Output VPC
 output "vpc_id" {
   description = "The ID of the VPC."
   value       = module.k8s.vpc_id
@@ -10,10 +10,11 @@ output "vswitch_ids" {
 }
 
 output "nat_gateway_id" {
-  value = module.k8s.nat_gateway_id
+  description = "The ID of the NAT Gateway."
+  value       = module.k8s.nat_gateway_id
 }
 
-// Output kubernetes resource
+# Output kubernetes resource
 output "cluster_id" {
   description = "ID of the kunernetes cluster."
   value       = module.k8s.cluster_id
@@ -32,4 +33,10 @@ output "cluster_nodes" {
 output "this_k8s_node_ids" {
   description = "List ids of of cluster node."
   value       = module.k8s.this_k8s_node_ids
+}
+
+output "output_file" {
+  description = "The name of the output file."
+  value       = data.alicloud_cs_cluster_credential.auth.output_file
+
 }
