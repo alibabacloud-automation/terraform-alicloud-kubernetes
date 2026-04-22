@@ -230,12 +230,13 @@ More details see [How to use provider in the module](https://www.terraform.io/do
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
+| <a name="requirement_alicloud"></a> [alicloud](#requirement\_alicloud) | >= 1.200.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_alicloud"></a> [alicloud](#provider\_alicloud) | n/a |
+| <a name="provider_alicloud"></a> [alicloud](#provider\_alicloud) | >= 1.200.0 |
 
 ## Modules
 
@@ -245,22 +246,22 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [alicloud_cs_kubernetes.k8s](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/resources/cs_kubernetes) | resource |
-| [alicloud_cs_kubernetes_node_pool.default](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/resources/cs_kubernetes_node_pool) | resource |
-| [alicloud_eip.default](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/resources/eip) | resource |
-| [alicloud_eip_association.default](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/resources/eip_association) | resource |
-| [alicloud_nat_gateway.default](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/resources/nat_gateway) | resource |
-| [alicloud_snat_entry.default](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/resources/snat_entry) | resource |
-| [alicloud_vpc.vpc](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/resources/vpc) | resource |
-| [alicloud_vswitch.vswitches](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/resources/vswitch) | resource |
-| [alicloud_instance_types.default](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/data-sources/instance_types) | data source |
-| [alicloud_zones.default](https://registry.terraform.io/providers/hashicorp/alicloud/latest/docs/data-sources/zones) | data source |
+| [alicloud_cs_kubernetes.k8s](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/cs_kubernetes) | resource |
+| [alicloud_cs_kubernetes_node_pool.default](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/cs_kubernetes_node_pool) | resource |
+| [alicloud_eip.default](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/eip) | resource |
+| [alicloud_eip_association.default](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/eip_association) | resource |
+| [alicloud_nat_gateway.default](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/nat_gateway) | resource |
+| [alicloud_snat_entry.default](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/snat_entry) | resource |
+| [alicloud_vpc.vpc](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/vpc) | resource |
+| [alicloud_vswitch.vswitches](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/vswitch) | resource |
+| [alicloud_instance_types.default](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/instance_types) | data source |
+| [alicloud_zones.default](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/zones) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addon components in kubernetes cluster | <pre>list(object({<br>    name   = string<br>    config = string<br>  }))</pre> | `[]` | no |
+| <a name="input_cluster_addons"></a> [cluster\_addons](#input\_cluster\_addons) | Addon components in kubernetes cluster | <pre>list(object({<br/>    name   = string<br/>    config = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_cpu_core_count"></a> [cpu\_core\_count](#input\_cpu\_core\_count) | CPU core count is used to fetch instance types. | `number` | `1` | no |
 | <a name="input_cpu_policy"></a> [cpu\_policy](#input\_cpu\_policy) | kubelet cpu policy. Valid values: 'none','static'. Default to 'none'. | `string` | `"none"` | no |
 | <a name="input_create_vpc"></a> [create\_vpc](#input\_create\_vpc) | Boolean.  If you have a vpc already, use that one, else make this true and one will be created. | `bool` | `false` | no |
@@ -282,17 +283,17 @@ No modules.
 | <a name="input_node_cidr_mask"></a> [node\_cidr\_mask](#input\_node\_cidr\_mask) | The node cidr block to specific how many pods can run on single node. Valid values: [24-28]. | `number` | `24` | no |
 | <a name="input_number_format"></a> [number\_format](#input\_number\_format) | The number format used to output. | `string` | `"%02d"` | no |
 | <a name="input_proxy_mode"></a> [proxy\_mode](#input\_proxy\_mode) | Proxy mode is option of kube-proxy. Valid values: 'ipvs','iptables'. Default to 'iptables'. | `string` | `"iptables"` | no |
-| <a name="input_subscription"></a> [subscription](#input\_subscription) | A mapping of fields for Prepaid ECS instances created. | `map(string)` | <pre>{<br>  "auto_renew": false,<br>  "auto_renew_period": 1,<br>  "period": 1,<br>  "period_unit": "Month"<br>}</pre> | no |
+| <a name="input_subscription"></a> [subscription](#input\_subscription) | A mapping of fields for Prepaid ECS instances created. | `map(string)` | <pre>{<br/>  "auto_renew": false,<br/>  "auto_renew_period": 1,<br/>  "period": 1,<br/>  "period_unit": "Month"<br/>}</pre> | no |
 | <a name="input_system_disk_category"></a> [system\_disk\_category](#input\_system\_disk\_category) | The system disk category used to launch one or more worker ecs instances. | `string` | `"cloud_efficiency"` | no |
 | <a name="input_system_disk_size"></a> [system\_disk\_size](#input\_system\_disk\_size) | The system disk size used to launch one or more worker ecs instances. | `number` | `40` | no |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | The cidr block used to launch a new vpc when 'vpc\_id' is not specified. | `string` | `"10.0.0.0/8"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Existing vpc id used to create several vswitches and other resources. | `string` | `""` | no |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | The vpc name used to create a new vpc when 'vpc\_id' is not specified. Default to variable `example_name` | `string` | `""` | no |
-| <a name="input_vswitch_cidrs"></a> [vswitch\_cidrs](#input\_vswitch\_cidrs) | List of cidr blocks used to create several new vswitches when 'vswitch\_ids' is not specified. | `list(string)` | <pre>[<br>  "10.1.0.0/16",<br>  "10.2.0.0/16",<br>  "10.3.0.0/16"<br>]</pre> | no |
+| <a name="input_vswitch_cidrs"></a> [vswitch\_cidrs](#input\_vswitch\_cidrs) | List of cidr blocks used to create several new vswitches when 'vswitch\_ids' is not specified. | `list(string)` | <pre>[<br/>  "10.1.0.0/16",<br/>  "10.2.0.0/16",<br/>  "10.3.0.0/16"<br/>]</pre> | no |
 | <a name="input_vswitch_ids"></a> [vswitch\_ids](#input\_vswitch\_ids) | List of existing vswitch id. | `list(string)` | `[]` | no |
 | <a name="input_vswitch_name_prefix"></a> [vswitch\_name\_prefix](#input\_vswitch\_name\_prefix) | The vswitch name prefix used to create several new vswitches. Default to variable 'example\_name'. | `string` | `""` | no |
 | <a name="input_worker_instance_types"></a> [worker\_instance\_types](#input\_worker\_instance\_types) | The ecs instance types used to launch worker nodes. | `list(string)` | `[]` | no |
-| <a name="input_worker_password"></a> [worker\_password](#input\_worker\_password) | The password of worker ECS instance. | `list(string)` | <pre>[<br>  "Just4Test"<br>]</pre> | no |
+| <a name="input_worker_password"></a> [worker\_password](#input\_worker\_password) | The password of worker ECS instance. | `list(string)` | <pre>[<br/>  "Just4Test"<br/>]</pre> | no |
 
 ## Outputs
 
