@@ -20,15 +20,22 @@ data "alicloud_instance_types" "cloud_essd" {
   cpu_core_count       = 4
   memory_size          = 8
   system_disk_category = "cloud_essd"
+  instance_type_family = "ecs.g9i"
 }
 
 module "k8s" {
   source = "../.."
 
-  new_nat_gateway       = false
-  vpc_id                = alicloud_vpc.default.id
-  vswitch_ids           = alicloud_vswitch.default[*].id
-  master_instance_types = [data.alicloud_instance_types.cloud_essd.instance_types[0].id, data.alicloud_instance_types.cloud_essd.instance_types[1].id, data.alicloud_instance_types.cloud_essd.instance_types[2].id]
+  new_nat_gateway = false
+  vpc_id          = alicloud_vpc.default.id
+  vswitch_ids     = alicloud_vswitch.default[*].id
+  cpu_core_count  = 2
+  memory_size     = 8
+  master_instance_types = [
+    data.alicloud_instance_types.cloud_essd.instance_types[0].id,
+    data.alicloud_instance_types.cloud_essd.instance_types[0].id,
+    data.alicloud_instance_types.cloud_essd.instance_types[0].id,
+  ]
   worker_instance_types = [data.alicloud_instance_types.cloud_essd.instance_types[0].id]
   k8s_pod_cidr          = "10.72.0.0/16"
   k8s_service_cidr      = "172.18.0.0/16"
