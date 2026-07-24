@@ -1,6 +1,7 @@
 
 data "alicloud_zones" "default" {
   available_resource_creation = "VSwitch"
+  available_instance_type     = data.alicloud_instance_types.cloud_essd.instance_types[0].id
 }
 
 resource "alicloud_vpc" "default" {
@@ -16,11 +17,7 @@ resource "alicloud_vswitch" "default" {
 }
 
 data "alicloud_instance_types" "cloud_essd" {
-  availability_zone    = data.alicloud_zones.default.zones[0].id
-  cpu_core_count       = 4
-  memory_size          = 16
   system_disk_category = "cloud_essd"
-  instance_type_family = "ecs.g9i"
 }
 
 module "k8s" {
