@@ -18,7 +18,7 @@ resource "alicloud_vswitch" "default" {
 data "alicloud_instance_types" "cloud_essd" {
   availability_zone    = data.alicloud_zones.default.zones[0].id
   cpu_core_count       = 4
-  memory_size          = 8
+  memory_size          = 16
   system_disk_category = "cloud_essd"
   instance_type_family = "ecs.g9i"
 }
@@ -29,8 +29,8 @@ module "k8s" {
   new_nat_gateway = false
   vpc_id          = alicloud_vpc.default.id
   vswitch_ids     = alicloud_vswitch.default[*].id
-  cpu_core_count  = 2
-  memory_size     = 8
+  cpu_core_count  = 4
+  memory_size     = 16
   master_instance_types = [
     data.alicloud_instance_types.cloud_essd.instance_types[0].id,
     data.alicloud_instance_types.cloud_essd.instance_types[0].id,
