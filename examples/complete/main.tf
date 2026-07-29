@@ -1,7 +1,11 @@
 
+locals {
+  node_instance_type = "ecs.c7.xlarge"
+}
+
 data "alicloud_zones" "default" {
   available_resource_creation = "VSwitch"
-  available_instance_type     = data.alicloud_instance_types.cloud_essd.instance_types[0].id
+  available_instance_type     = local.node_instance_type
 }
 
 resource "alicloud_vpc" "default" {
@@ -16,10 +20,6 @@ resource "alicloud_vswitch" "default" {
   zone_id    = data.alicloud_zones.default.zones[0].id
 }
 
-data "alicloud_instance_types" "cloud_essd" {
-  system_disk_category = "cloud_essd"
-}
-
 module "k8s" {
   source = "../.."
 
@@ -29,11 +29,11 @@ module "k8s" {
   cpu_core_count  = 4
   memory_size     = 16
   master_instance_types = [
-    data.alicloud_instance_types.cloud_essd.instance_types[0].id,
-    data.alicloud_instance_types.cloud_essd.instance_types[0].id,
-    data.alicloud_instance_types.cloud_essd.instance_types[0].id,
+    local.node_instance_type,
+    local.node_instance_type,
+    local.node_instance_type,
   ]
-  worker_instance_types = [data.alicloud_instance_types.cloud_essd.instance_types[0].id]
+  worker_instance_types = [local.node_instance_type]
   k8s_pod_cidr          = "10.72.0.0/16"
   k8s_service_cidr      = "172.18.0.0/16"
   k8s_worker_number     = 2
