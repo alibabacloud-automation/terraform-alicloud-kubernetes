@@ -93,10 +93,10 @@ resource "alicloud_cs_kubernetes" "k8s" {
 resource "alicloud_cs_kubernetes_node_pool" "default" {
   count = var.k8s_number
 
-  name        = alicloud_cs_kubernetes.k8s[count.index].name
-  cluster_id  = alicloud_cs_kubernetes.k8s[count.index].id
-  vswitch_ids = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids)) : length(var.vswitch_cidrs) < 1 ? [] : split(",", join(",", alicloud_vswitch.vswitches[*].id))
-  password    = var.worker_password[count.index]
+  node_pool_name = alicloud_cs_kubernetes.k8s[count.index].name
+  cluster_id     = alicloud_cs_kubernetes.k8s[count.index].id
+  vswitch_ids    = length(var.vswitch_ids) > 0 ? split(",", join(",", var.vswitch_ids)) : length(var.vswitch_cidrs) < 1 ? [] : split(",", join(",", alicloud_vswitch.vswitches[*].id))
+  password       = var.worker_password[count.index]
 
   desired_size          = var.k8s_worker_number
   install_cloud_monitor = var.install_cloud_monitor

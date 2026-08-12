@@ -1,4 +1,8 @@
 
+provider "alicloud" {
+  region = "cn-hangzhou"
+}
+
 data "alicloud_zones" "default" {
   available_resource_creation = "VSwitch"
 }
