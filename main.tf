@@ -1,12 +1,14 @@
 # Instance_types data source for instance_type
 data "alicloud_instance_types" "default" {
+  count          = length(var.vswitch_ids) == 0 ? 1 : 0
   cpu_core_count = var.cpu_core_count
   memory_size    = var.memory_size
 }
 
 # Zones data source for availability_zone
 data "alicloud_zones" "default" {
-  available_instance_type = data.alicloud_instance_types.default.instance_types[0].id
+  count                   = length(var.vswitch_ids) == 0 ? 1 : 0
+  available_instance_type = data.alicloud_instance_types.default[0].instance_types[0].id
 }
 
 # If there is not specifying vpc_id, the module will launch a new vpc
@@ -21,7 +23,7 @@ resource "alicloud_vswitch" "vswitches" {
   count      = length(var.vswitch_ids) > 0 ? 0 : length(var.vswitch_cidrs)
   vpc_id     = var.vpc_id == "" ? join("", alicloud_vpc.vpc[*].id) : var.vpc_id
   cidr_block = var.vswitch_cidrs[count.index]
-  zone_id    = data.alicloud_zones.default.zones[count.index % length(data.alicloud_zones.default.zones)]["id"]
+  zone_id    = data.alicloud_zones.default[0].zones[count.index % length(data.alicloud_zones.default[0].zones)]["id"]
   vswitch_name = var.vswitch_name_prefix == "" ? format(
     "%s-%s",
     var.example_name,
